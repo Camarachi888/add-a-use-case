@@ -1477,6 +1477,10 @@ Details:
   - The system verifies that the actor is authorized to deactivate the selected student under BR-student-lifecycle before returning this outcome.
   - The system reports "This student is already deactivated" as a successful outcome and makes no further changes.
   - Use case ends.
+- **4a. The actor cancels at the warning:**
+  - The actor selects Cancel or uses an enabled dismissal method, such as Escape or the dialog's close button.
+  - The system closes the warning and keeps the actor on the selected student's details. The client sends a deactivation request only after explicit confirmation.
+  - Use case ends without changing the student's account.
 - **6b. The deactivation request fails authentication or authorization:**
   - The system returns `401 Unauthorized` if the request lacks valid authentication.
   - For an authenticated caller, the system verifies permission under BR-student-lifecycle and BR-section-scoped-access. If the caller lacks permission or the student ID has no matching record, the system returns a generic `403 Forbidden`.
