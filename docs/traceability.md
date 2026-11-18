@@ -347,6 +347,7 @@ A business rule (`BR-*`, owned by [business-rules.md](requirements/business-rule
 | `BR-document-creation` | `UC-TPL-provision-documents` | — | — |
 | `BR-edit-lock-required` | `UC-COL-collaborative-edit`, `UC-DOC-edit-document`, `UC-DOC-edit-use-case` | `DI-concurrency-control`, (prose) | — |
 | `BR-evaluation-editable-until-close` | `UC-EVA-submit-evaluation` | — | — |
+| `BR-evaluation-inactive-teammate` | `UC-EVA-section-evaluation-report`, `UC-EVA-submit-evaluation`, `UC-STU-deactivate-student` | — | — |
 | `BR-evaluation-private-comment` | `UC-EVA-section-evaluation-report`, `UC-EVA-student-evaluation-report`, `UC-EVA-submit-evaluation`, `UC-EVA-view-own-evaluation` | `FR-SEC-authorization` | — |
 | `BR-evaluation-submission-window` | `UC-EVA-submit-evaluation`, `UC-NOT-remind-non-submitters` | — | — |
 | `BR-evaluation-visibility` | `UC-EVA-view-own-evaluation` | `FR-SEC-authorization` | — |
@@ -364,7 +365,7 @@ A business rule (`BR-*`, owned by [business-rules.md](requirements/business-rule
 | `BR-section-config-access` | `UC-CFG-configure-assistant-instructions`, `UC-CFG-configure-review-criteria`, `UC-CFG-configure-teaching-context`, `UC-CFG-toggle-assistants` | — | — |
 | `BR-section-scoped-access` | `UC-EVA-section-evaluation-report`, `UC-EVA-student-evaluation-report`, `UC-NOT-remind-non-submitters`, `UC-WAR-student-war-report`, `UC-WAR-team-war-report` | `FR-SEC-authorization`, `SEC-authorization` | `QS-cross-team-denial` |
 | `BR-source-material-import` | `UC-AI-import-source-material` | — | — |
-| `BR-submission-owed` | `UC-EVA-section-evaluation-report`, `UC-NOT-remind-non-submitters`, `UC-STU-reactivate-student`, `UC-WAR-team-war-report` | `FR-NOT-weekly-reminder` | — |
+| `BR-submission-owed` | `UC-EVA-section-evaluation-report`, `UC-EVA-submit-evaluation`, `UC-NOT-remind-non-submitters`, `UC-STU-reactivate-student`, `UC-WAR-team-war-report` | `FR-NOT-weekly-reminder` | — |
 | `BR-student-lifecycle` | `UC-STU-deactivate-student`, `UC-STU-delete-student`, `UC-STU-reactivate-student` | `FR-SEC-active-account` | — |
 | `BR-team-admin-only` | `UC-INS-assign-instructors`, `UC-INS-remove-instructor`, `UC-TEA-assign-students`, `UC-TEA-create-team`, `UC-TEA-delete-team`, `UC-TEA-edit-team`, `UC-TEA-remove-student` | — | — |
 | `BR-team-assignment-required` | `UC-EVA-submit-evaluation`, `UC-NOT-remind-non-submitters`, `UC-WAR-manage-activities` | — | — |
