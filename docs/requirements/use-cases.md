@@ -1458,7 +1458,6 @@ Details:
 
 **Preconditions:**
 - PRE-1. The course admin or instructor is logged into the system.
-- PRE-2. There exists at least one active student in the system.
 
 **Postconditions:**
 - POST-1. The student's account is deactivated.
@@ -1473,6 +1472,12 @@ Details:
 7. Use case ends.
 
 **Extensions:**
+- **3a, 6a. The selected student's account is already deactivated:**
+  - The account was already deactivated when the student was selected, or another authorized actor deactivated it while the confirmation was open.
+  - The system verifies that the actor is authorized to deactivate the selected student under BR-student-lifecycle before returning this outcome.
+  - The system reports "This student is already deactivated" as a successful outcome and makes no further changes.
+  - Use case ends.
+
 **Priority:** Low
 **Frequency of Use:** Rare. Occurs occasionally when a student withdraws from a course section.
 **Business Rules:** BR-student-lifecycle, BR-evaluation-inactive-teammate
