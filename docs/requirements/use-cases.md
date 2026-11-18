@@ -1458,7 +1458,6 @@ Details:
 
 **Preconditions:**
 - PRE-1. The course admin or instructor is logged into the system.
-- PRE-2. There exists at least one active student in the system.
 
 **Postconditions:**
 - POST-1. The student's account is deactivated.
@@ -1473,12 +1472,27 @@ Details:
 7. Use case ends.
 
 **Extensions:**
+- **3a, 6a. The selected student's account is already deactivated:**
+  - The account was already deactivated when the student was selected, or another authorized actor deactivated it while the confirmation was open.
+  - The system verifies that the actor is authorized to deactivate the selected student under BR-student-lifecycle before returning this outcome.
+  - The system reports "This student is already deactivated" as a successful outcome and makes no further changes.
+  - Use case ends.
+- **4a. The actor cancels at the warning:**
+  - The actor selects Cancel or uses an enabled dismissal method, such as Escape or the dialog's close button.
+  - The system closes the warning and keeps the actor on the selected student's details. The client sends a deactivation request only after explicit confirmation.
+  - Use case ends without changing the student's account.
+- **6b. The deactivation request fails authentication or authorization:**
+  - The system returns `401 Unauthorized` if the request lacks valid authentication.
+  - For an authenticated caller, the system verifies permission under BR-student-lifecycle and BR-section-scoped-access. If the caller lacks permission or the student ID has no matching record, the system returns a generic `403 Forbidden`.
+  - The system ends the use case without disclosing student details or account status and without changing state. The denial takes precedence over the already-deactivated outcome.
+
 **Priority:** Low
 **Frequency of Use:** Rare. Occurs occasionally when a student withdraws from a course section.
-**Business Rules:** BR-student-lifecycle
+**Business Rules:** BR-student-lifecycle, BR-section-scoped-access, BR-evaluation-inactive-teammate
 
 **Associated Information:**
 - Consequence of the deactivation: The student will no longer be able to log in or submit weekly activity reports and peer evaluations, but the student's account and her previously submitted work are kept in the system. Deactivation will NOT remove the student from the system, and the account can be reactivated in the future (UC-STU-reactivate-student: Reactivate a student). This is distinct from deletion (UC-STU-delete-student: Delete a student), which is a physical, unrecoverable delete. The course admin or instructor shall be able to cancel the use case at any time prior to submitting it.
+- Once deactivation takes effect, the system denies the student's next request for a protected resource, even if she is already signed in and presents an unexpired token (FR-SEC-active-account).
 
 **Related Use Cases:** UC-STU-delete-student: Delete a student; UC-STU-reactivate-student: Reactivate a student
 **Assumptions:**
@@ -1513,10 +1527,12 @@ Details:
 **Extensions:**
 **Priority:** Low
 **Frequency of Use:** Rare. Occurs occasionally when a previously withdrawn student returns to a course section.
-**Business Rules:** BR-student-lifecycle
+**Business Rules:** BR-student-lifecycle, BR-submission-owed
 
 **Associated Information:**
 - The course admin or instructor shall be able to cancel the use case at any time prior to submitting it.
+- Deactivation preserves the student's team assignment under BR-student-lifecycle. On reactivation, her submission obligations resume according to her current team assignment and BR-submission-owed.
+- After reactivation, an otherwise valid, unexpired token issued before deactivation may be accepted again, subject to the normal authentication and authorization checks.
 
 **Related Use Cases:** UC-STU-delete-student: Delete a student; UC-STU-deactivate-student: Deactivate a student
 **Assumptions:**
@@ -2202,9 +2218,9 @@ Report generating algorithm: N/A
 
 **Main Success Scenario:**
 1. The student indicates to submit a peer evaluation for the previous week.
-2. The system asks the student to provide peer evaluations for every team member.
+2. The system indicates which teammates the student is required to evaluate (BR-submission-owed) and offers optional evaluations under BR-evaluation-inactive-teammate.
 3. See the "Details" defined in the Associated Information of this use case.
-4. The student evaluates each team member (self included) and confirms that she has finished.
+4. The student completes the required evaluations and any optional evaluations she chooses, then confirms that she has finished.
 5. The system validates the student's inputs according to the "Details" defined in the Associated Information of this use case.
 6. The system displays the details of the peer evaluation and asks the student to confirm the evaluation and submission.
 7. The system notes that a submitted peer evaluation remains editable while its submission window is open; the student may re-submit it to update it until the window closes (BR-evaluation-editable-until-close, BR-evaluation-submission-window).
@@ -2228,15 +2244,15 @@ Report generating algorithm: N/A
 
 **Priority:** High
 **Frequency of Use:** Approximately 35-40 users, 1 usage per week.
-**Business Rules:** BR-team-scoped-access (the student evaluates the members of a team she belongs to, and no other team), BR-team-assignment-required (only a student assigned to a team submits one), BR-active-weeks, BR-evaluation-editable-until-close, BR-evaluation-submission-window, BR-evaluation-private-comment
+**Business Rules:** BR-team-scoped-access (the student evaluates the members of a team she belongs to, and no other team), BR-team-assignment-required (only a student assigned to a team submits one), BR-active-weeks, BR-evaluation-editable-until-close, BR-evaluation-submission-window, BR-evaluation-private-comment, BR-submission-owed, BR-evaluation-inactive-teammate
 
 **Associated Information:**
 
 Details:
-- Every team member MUST be evaluated.
+- The required evaluations are determined by BR-submission-owed.
 - Scores MUST be integers.
 
-Example (each team member, self included, is evaluated on every rubric criterion):
+Example (all team members in this example have active accounts):
 
 | student | Quality of work — How do you rate the quality of this teammate's work? (1-10) | … | Public comments | Private comments |
 | ---- | ---- | ---- | ---- | ---- |
@@ -2343,7 +2359,7 @@ Report generating algorithm: For each individual criterion score (e.g., Quality 
 
 **Priority:** High
 **Frequency of Use:** Approximately 2 users, average of 1 usage per week.
-**Business Rules:** BR-section-scoped-access (the instructor may generate the report only for a course section she is assigned to), BR-evaluation-private-comment, BR-submission-owed (who has not turned in the peer evaluation)
+**Business Rules:** BR-section-scoped-access (the instructor may generate the report only for a course section she is assigned to), BR-evaluation-private-comment, BR-submission-owed (who has not turned in the peer evaluation), BR-evaluation-inactive-teammate
 
 **Associated Information:**
 
